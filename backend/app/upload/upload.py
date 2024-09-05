@@ -1,23 +1,28 @@
 # backend/app/upload/upload.py
-from flask import request, jsonify
+from flask import Blueprint, request, jsonify
 from app.exception.file_exceptions import *
 
+# 블루프린트 생성
+upload_blueprint = Blueprint('upload', __name__)
+
+# 파일 업로드 라우트 정의
+@upload_blueprint.route('/upload', methods=['POST'])
 def upload_file():
-    # file체킹
+    # file 체크
     if 'file' not in request.files:
         raise FileNotFoundError()
 
     file = request.files['file']
-    
+
     # Check if a file was selected
     if file.filename == '':
         raise FileNameError()
 
-    # 확장자 체킹
+    # 확장자 체크
     if not file.filename.endswith('.txt'):
         raise InvalidFileFormatError()
 
-    # utf-8인코딩
+    # utf-8 인코딩
     try:
         content = file.read().decode('utf-8')
     except Exception as e:
