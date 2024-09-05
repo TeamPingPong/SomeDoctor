@@ -24,7 +24,7 @@ export function AppPage() {
       formData.append('file', file)
 
       try {
-        const response = await fetch('/api/upload', {
+        const response = await fetch('http://localhost:5000/api/upload', {
           method: 'POST',
           body: formData,
         })
@@ -34,11 +34,13 @@ export function AppPage() {
           console.log('File uploaded successfully:', result)
           router.push('/results')
         } else {
+          // router.push('/results')
           throw new Error('File upload failed')
         }
       } catch (error) {
         console.error('Error uploading file:', error)
         // 여기에 에러 처리 로직을 추가할 수 있습니다 (예: 사용자에게 에러 메시지 표시)
+        // router.push('/results')
       } finally {
         setIsUploading(false)
       }
