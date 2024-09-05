@@ -4,12 +4,14 @@ import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useResultStore } from '@/store/resultStore'
 
 export function AppPage() {
   const [file, setFile] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const router = useRouter()
-
+  const setResult = useResultStore((state) => state.setResult)
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0])
@@ -32,6 +34,7 @@ export function AppPage() {
         if (response.ok) {
           const result = await response.json()
           console.log('File uploaded successfully:', result)
+          setResult(result)
           router.push('/results')
         } else {
           // router.push('/results')
@@ -56,7 +59,8 @@ export function AppPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Input type="file" onChange={handleFileChange} accept=".txt" />
+            <p className="text-sm text-gray-500 mb-2">허용된 파일 형식: .txt, .csv</p>
+              <Input type="file" onChange={handleFileChange} accept=".txt,.csv" />
             </div>
             <Button type="submit" disabled={!file || isUploading}>
               {isUploading ? '업로드 중...' : '분석 시작'}

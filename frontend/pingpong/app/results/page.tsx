@@ -12,6 +12,7 @@ import {
   Legend
 } from 'chart.js'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useResultStore } from '@/store/resultStore'
 
 ChartJS.register(
   RadialLinearScale,
@@ -22,14 +23,17 @@ ChartJS.register(
   Legend
 )
 
-
 export default function Results() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-
+  const result = useResultStore((state) => state.result)
   // 이 데이터는 실제로는 서버에서 분석 결과를 받아와야 합니다
   const analysisData = {
-    yourScore: 75,
-    partnerScore: 80,
+    participants: [
+      { name: '나', score: 75 },
+      { name: '참여자 1', score: 80 },
+      { name: '참여자 2', score: 70 },
+      { name: '참여자 3', score: 85 },
+    ],
     finalScore: 78,
     finalScoreDescription: "전반적으로 긍정적인 대화를 나누셨습니다. 서로를 이해하려는 노력이 보입니다.",
     radarData: {
@@ -66,14 +70,14 @@ export default function Results() {
         <CardHeader>
           <CardTitle className="text-center">채팅 분석 결과</CardTitle>
         </CardHeader>
-        <CardContent className="flex justify-between items-center">
-          <div className="text-center">
-            <p className="text-2xl font-bold">{analysisData.yourScore}</p>
-            <p>나의 점수</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold">{analysisData.partnerScore}</p>
-            <p>상대방의 점수</p>
+        <CardContent>
+          <div className="flex flex-wrap justify-around items-center">
+            {analysisData.participants.map((participant, index) => (
+              <div key={index} className="text-center p-4">
+                <p className="text-2xl font-bold">{participant.score}</p>
+                <p>{participant.name}</p>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
