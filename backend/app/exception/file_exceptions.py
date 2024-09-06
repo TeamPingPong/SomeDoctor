@@ -15,7 +15,7 @@ class FileNameError(FileUploadError):
         super().__init__("No selected file")
 
 class InvalidFileFormatError(FileUploadError):
-    """Exception raised when the uploaded file is not a .txt file."""
+    """Exception raised when the uploaded file is not a .txt or .csv file."""
     def __init__(self):
         super().__init__("Invalid file format")
 
@@ -23,3 +23,8 @@ class FileReadError(FileUploadError):
     """Exception raised when there is an error reading the file."""
     def __init__(self, message):
         super().__init__(message)
+
+class TooManyParticipantsError(FileUploadError):
+    """Exception raised when there are more than two participants in the file."""
+    def __init__(self):
+        super().__init__("The file contains more than two participants")
