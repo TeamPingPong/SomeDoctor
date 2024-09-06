@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Radar, Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -50,11 +50,32 @@ interface AnalysisData {
   };
   advice: string;
 }
+// 색상 맵을 위한 새로운 인터페이스
+interface ColorMap {
+  [key: string]: string;
+}
+
 
 export default function Results() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const result = useResultStore((state) => state.result)
+  const [participantColors, setParticipantColors] = useState<{[key: string]: string}>({})
 
+  useEffect(() => {
+
+    if (result && result.participants) {
+      const colors = result.participants.reduce((acc: ColorMap, participant: Participant) => {
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 255);
+        const b = Math.floor(Math.random() * 255);
+        acc[participant.name] = `rgb(${r}, ${g}, ${b})`;
+        return acc;
+      }, {} as {[key: string]: string});
+      setParticipantColors(colors);
+
+    }
+
+  }, [result]); // result가 변경될 때만 실행
   // Early return if result is not available
   if (!result) {
     return (
@@ -84,28 +105,18 @@ export default function Results() {
   }
   const radarLabels = Object.keys(analysisData.participants[0].radarData)
 
-  // const radarData = {
-  //   labels: radarLabels,
-  //   datasets: analysisData.participants.map((participant: Participant) => ({
-  //     label: participant.name,
-  //     data: radarLabels.map(label => participant.radarData[label]),
-  //     backgroundColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.2)`,
-  //     borderColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`,
-  //     borderWidth: 1,
-  //   }))
-  // }
 
   const chartData = useMemo(() => {
     const getRandomColor = () => {
       const r = Math.floor(Math.random() * 255);
       const g = Math.floor(Math.random() * 255);
       const b = Math.floor(Math.random() * 255);
-      return `rgb(${r}, ${g}, ${b}, 0.2)`;
+      return `rgb(${r}, ${g}, ${b}, 0.7)`;
     };
     return {
       labels: radarLabels,
-      datasets: analysisData.participants.map((participant, index) => {
-        const color = getRandomColor();
+      datasets: analysisData.participants.map((participant) => {
+        const color = participantColors[participant.name] || 'rgb(0, 0, 0)';
         return {
           label: participant.name,
           data: radarLabels.map(label => participant.radarData[label]),
@@ -115,7 +126,7 @@ export default function Results() {
         }
       })
     }
-  }, [analysisData, radarLabels])
+  }, [analysisData, radarLabels, participantColors])
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category)
@@ -186,7 +197,7 @@ export default function Results() {
           </CardHeader>
           <CardContent>
             {selectedCategory ? (
-              // <p>{analysisData.categoryDescriptions[selectedCategory]}</p>
+
               <>
                 <p className="mb-4">{analysisData.categoryDescriptions[selectedCategory]}</p>
                 <Bar 
