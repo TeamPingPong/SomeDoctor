@@ -49,9 +49,33 @@ export default function Results() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const result = useResultStore((state) => state.result)
 
+  // Early return if result is not available
+  if (!result) {
+    return (
+      <div className="container mx-auto mt-10">
+        <Card>
+          <CardContent>
+            <p className="text-center">데이터를 불러오는 중입니다...</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   // 서버에서 받아온 데이터라고 가정
   const analysisData: AnalysisData = result
-
+  // Check if analysisData has the expected structure
+  if (!analysisData.participants || analysisData.participants.length === 0) {
+    return (
+      <div className="container mx-auto mt-10">
+        <Card>
+          <CardContent>
+            <p className="text-center">분석 데이터가 올바르지 않습니다.</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
   const radarLabels = Object.keys(analysisData.participants[0].radarData)
 
   const radarData = {
