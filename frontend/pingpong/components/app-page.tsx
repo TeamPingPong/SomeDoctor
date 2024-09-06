@@ -26,15 +26,16 @@ export function AppPage() {
       formData.append('file', file)
 
       try {
-        const response = await fetch('http://localhost:5000/api/generic', {
-          method: 'GET', // 'POST',
-          // body: formData,
+        const response = await fetch('http://localhost:5000/api/upload', {
+          method:  'POST',
+          body: formData,
         })
 
         if (response.ok) {
           const result = await response.json()
           console.log('File uploaded successfully:', result)
           setResult(result)
+          console.log('Result after setting:', useResultStore.getState().result)
           router.push('/results')
         } else {
           // router.push('/results')
