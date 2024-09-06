@@ -26,7 +26,7 @@ export function AppPage() {
       formData.append('file', file)
 
       try {
-        const response = await fetch('http://192.170.2.36:5000/api/generic', {
+        const response = await fetch('${process.env.NEXT_PRIVATE_API_URL}', {
           method: 'GET', // 'POST',
           // body: formData,
         })
