@@ -54,7 +54,7 @@ export function AppPage() {
     <div className="container mx-auto mt-10">
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
-          <CardTitle>채팅 기록 분석</CardTitle>
+          <CardTitle>카카오톡 채팅 기록 분석</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -66,6 +66,15 @@ export function AppPage() {
               {isUploading ? '업로드 중...' : '분석 시작'}
             </Button>
           </form>
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-2">카카오톡 대화 내용 추출 방법</h3>
+            <ol className="list-decimal list-inside space-y-2">
+              <li>대화 내용 추출하고자 하는 채팅방 진입</li>
+              <li>☰버튼 클릭 후 채팅방 설정 클릭</li>
+              <li>대화 내용 관리 탭 클릭</li>
+              <li>대화 내용 저장 버튼 클릭</li>
+            </ol>
+          </div>
         </CardContent>
       </Card>
     </div>
