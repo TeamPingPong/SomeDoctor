@@ -26,7 +26,7 @@ export function AppPage() {
       formData.append('file', file)
 
       try {
-        const response = await fetch('http://eice-06b7f98f35497b48e.4f143694.ec2-instance-connect-endpoint.ap-northeast-2.amazonaws.com:5000/api/generic', {
+        const response = await fetch('http://192.170.2.36:5000/api/generic', {
           method: 'GET', // 'POST',
           // body: formData,
         })
