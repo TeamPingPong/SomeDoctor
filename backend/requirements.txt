@@ -2,4 +2,4 @@ flask
 flask-cors
 openai
 requests
-flask-cors
+pandas
