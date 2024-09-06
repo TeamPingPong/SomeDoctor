@@ -49,9 +49,9 @@ def upload_file():
             return jsonify({'error': 'Invalid GPT result format'}), 500
 
         # GPT 결과를 업데이트
-        update_data_values(gpt_result)
+        result = update_data_values(gpt_result)
 
-        return gpt_result
+        
 
     except FileNotFoundError:
         return jsonify({'error': 'File not found'}), 400
@@ -66,6 +66,8 @@ def upload_file():
     except Exception as e:
         # 상세한 오류 정보를 제공
         return jsonify({'error': 'An unexpected error occurred', 'details': str(e)}), 500
+    
+    return result
 
 
 @upload_blueprint.route('/health', methods=['GET'])
