@@ -26,7 +26,7 @@ export function AppPage() {
       formData.append('file', file)
 
       try {
-        const response = await fetch('${process.env.NEXT_PRIVATE_API_URL}', {
+        const response = await fetch('${process.env.NEXT_PUBLIC_API_URL}', {
           method: 'GET', // 'POST',
           // body: formData,
         })
