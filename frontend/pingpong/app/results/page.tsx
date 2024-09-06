@@ -166,6 +166,29 @@
           </CardContent>
         </Card>
 
+      </div>
+    )
+  }
+  const radarLabels = Object.keys(analysisData.participants[0].radarData)
+
+
+  const chartData = useMemo(() => {
+    return {
+      labels: radarLabels,
+      datasets: analysisData.participants.map((participant) => {
+        const color = participantColors[participant.name] || 'rgb(0, 0, 0)';
+        return {
+          label: participant.name,
+          data: radarLabels.map(label => participant.radarData[label]),
+          backgroundColor: color, // `${color}15`,
+          borderColor: color,
+          borderWidth: 1,
+        }
+      })
+    }
+  }, [analysisData, radarLabels, participantColors])
+
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <Card>
             <CardContent>
