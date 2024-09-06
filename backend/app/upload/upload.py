@@ -51,7 +51,7 @@ def upload_file():
         # GPT 결과를 업데이트
         update_data_values(gpt_result)
 
-        return jsonify({'message': 'File processed and data updated successfully!'}), 200
+        return gpt_result
 
     except FileNotFoundError:
         return jsonify({'error': 'File not found'}), 400
@@ -66,3 +66,8 @@ def upload_file():
     except Exception as e:
         # 상세한 오류 정보를 제공
         return jsonify({'error': 'An unexpected error occurred', 'details': str(e)}), 500
+
+
+@upload_blueprint.route('/health', methods=['GET'])
+def health_check():
+    return "ok", 200
