@@ -1,6 +1,7 @@
 # backend/app/upload/upload.py
 from flask import Blueprint,request, jsonify
 from app.exception.file_exceptions import *
+#기존의 것으로 변경 후 디벨롭 예정
 
 upload_blueprint = Blueprint('upload',__name__)
 

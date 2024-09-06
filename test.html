@@ -1,60 +1,19 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>파일 업로드 테스트</title>
+    <title>File Upload Test</title>
 </head>
 <body>
 
-<h2>TXT 파일 업로드</h2>
-<!-- 파일 업로드를 위한 폼 -->
-<form action="http://127.0.0.1:5000/upload" method="post" enctype="multipart/form-data">
-  <!-- 업로드할 파일을 선택 -->
-  <label for="file">업로드할 파일을 선택하세요:</label>
-  <input type="file" id="file" name="file" accept=".txt, .csv" required>
-  <br><br>
-  <!-- 업로드 버튼 -->
-  <input type="submit" value="업로드">
+<h2>Upload a TXT File</h2>
+<form action="http://127.0.0.1:5000/api/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".txt" required>
+    <br><br>
+    <button type="submit">Upload</button>
 </form>
-
-<!-- 결과 출력 영역 -->
-<div id="result"></div>
-
-<!-- JavaScript로 응답을 처리하여 결과를 표시 -->
-<script>
-document.querySelector('form').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-
-    try {
-        const response = await fetch(form.action, {
-            method: form.method,
-            body: formData
-        });
-
-        if (!response.ok) {
-            throw new Error('업로드에 실패했습니다.');
-        }
-
-        const result = await response.json();
-        
-        // 결과를 HTML에 표시
-        const resultDiv = document.getElementById('result');
-        resultDiv.innerHTML = `
-            <h3>업로드 결과</h3>
-            <p><strong>총 메시지 수:</strong> ${result.summary.total_messages}</p>
-            <p><strong>CSV 파일 저장 위치:</strong> ${result.summary.csv_path}</p>
-            <h4>전체 메시지 내용:</h4>
-            <pre>${JSON.stringify(result.summary.all_messages, null, 2)}</pre>
-        `;
-    } catch (error) {
-        document.getElementById('result').innerText = error.message;
-    }
-});
-</script>
 
 </body>
 </html>
