@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Radar } from 'react-chartjs-2'
+import { useState, useMemo } from 'react'
+import { Radar, Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -9,7 +9,10 @@ import {
   LineElement,
   Filler,
   Tooltip,
-  Legend
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
 } from 'chart.js'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useResultStore } from '@/store/resultStore'
@@ -20,7 +23,10 @@ ChartJS.register(
   LineElement,
   Filler,
   Tooltip,
-  Legend
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
 )
 
 // 인터페이스 정의 (변경 없음)
@@ -78,16 +84,38 @@ export default function Results() {
   }
   const radarLabels = Object.keys(analysisData.participants[0].radarData)
 
-  const radarData = {
-    labels: radarLabels,
-    datasets: analysisData.participants.map((participant: Participant) => ({
-      label: participant.name,
-      data: radarLabels.map(label => participant.radarData[label]),
-      backgroundColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.2)`,
-      borderColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`,
-      borderWidth: 1,
-    }))
-  }
+  // const radarData = {
+  //   labels: radarLabels,
+  //   datasets: analysisData.participants.map((participant: Participant) => ({
+  //     label: participant.name,
+  //     data: radarLabels.map(label => participant.radarData[label]),
+  //     backgroundColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.2)`,
+  //     borderColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`,
+  //     borderWidth: 1,
+  //   }))
+  // }
+
+  const chartData = useMemo(() => {
+    const getRandomColor = () => {
+      const r = Math.floor(Math.random() * 255);
+      const g = Math.floor(Math.random() * 255);
+      const b = Math.floor(Math.random() * 255);
+      return `rgb(${r}, ${g}, ${b}, 0.2)`;
+    };
+    return {
+      labels: radarLabels,
+      datasets: analysisData.participants.map((participant, index) => {
+        const color = getRandomColor();
+        return {
+          label: participant.name,
+          data: radarLabels.map(label => participant.radarData[label]),
+          backgroundColor: color, // `${color}15`,
+          borderColor: color,
+          borderWidth: 1,
+        }
+      })
+    }
+  }, [analysisData, radarLabels])
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category)
@@ -122,7 +150,7 @@ export default function Results() {
         <Card>
           <CardContent>
             <Radar 
-              data={radarData} 
+              data={chartData} 
               options={{
                 onClick: (event, elements) => {
                   if (elements.length > 0) {
@@ -158,7 +186,34 @@ export default function Results() {
           </CardHeader>
           <CardContent>
             {selectedCategory ? (
-              <p>{analysisData.categoryDescriptions[selectedCategory]}</p>
+              // <p>{analysisData.categoryDescriptions[selectedCategory]}</p>
+              <>
+                <p className="mb-4">{analysisData.categoryDescriptions[selectedCategory]}</p>
+                <Bar 
+                  data={{
+                    labels: chartData.datasets.map(dataset => dataset.label),
+                    datasets: [{
+                      label: selectedCategory,
+                      data: chartData.datasets.map(dataset => 
+                        dataset.data[radarLabels.indexOf(selectedCategory)]
+                      ),
+                      backgroundColor: chartData.datasets.map(dataset => dataset.backgroundColor),
+                      borderColor: chartData.datasets.map(dataset => dataset.borderColor),
+                      borderWidth: 1,
+                    }]
+                  }}
+                  options={{
+                    responsive: true,
+                    indexAxis: 'y',
+                    scales: {
+                      x: {
+                        beginAtZero: true,
+                        max: 100
+                      }
+                    }
+                  }}
+                />
+              </>
             ) : (
               <p>차트에서 카테고리를 선택하세요.</p>
             )}
