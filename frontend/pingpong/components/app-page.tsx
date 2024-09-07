@@ -26,7 +26,7 @@ export function AppPage() {
       formData.append('file', file)
 
       try {
-        const response = await fetch('http://alb-pingpong-1992217830.ap-northeast-2.elb.amazonaws.com:5000/api/upload', {
+        const response = await fetch('http://192.170.2.36:5000/api/upload', {
           method:  'POST',
           body: formData,
         })
