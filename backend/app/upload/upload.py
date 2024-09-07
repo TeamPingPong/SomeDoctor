@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from app.exception.file_exceptions import (
     FileNotFoundError,
     FileNameError,
@@ -50,8 +50,8 @@ def upload_file():
 
         # GPT 결과를 업데이트
         result = update_data_values(gpt_result)
-
-        
+        participants = current_app.config.get('participants', [])
+        advice = current_app.config.get('advice', '')
 
     except FileNotFoundError:
         return jsonify({'error': 'File not found'}), 400
@@ -66,8 +66,11 @@ def upload_file():
     except Exception as e:
         # 상세한 오류 정보를 제공
         return jsonify({'error': 'An unexpected error occurred', 'details': str(e)}), 500
-    
-    return result
+    response_data = {
+        'participants': participants,
+        'advice': advice
+    }
+    return jsonify(response_data), 200
 
 
 @upload_blueprint.route('/health', methods=['GET'])
