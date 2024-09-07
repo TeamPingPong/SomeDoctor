@@ -194,7 +194,7 @@ export default function Results() {
     <div className="container mx-auto mt-10 space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle className="text-center">채팅 분석 결과</CardTitle>
+          <CardTitle className="text-center">호감도 분석 결과</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap justify-around items-center">
@@ -298,7 +298,7 @@ export default function Results() {
                 <div className="mt-2">
                   {Object.entries(participant.radarData).map(([category, data]) => (
                     <div key={category} className="mb-1">
-                      <span className="font-medium">{category}:</span> {data.status} ({data.value})
+                      <span className="font-medium">{category}:</span> {data.status} ({data.description})
                     </div>
                   ))}
                 </div>
