@@ -17,6 +17,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useResultStore } from '@/store/resultStore'
 
+
 ChartJS.register(
   RadialLinearScale,
   PointElement,
@@ -29,8 +30,14 @@ ChartJS.register(
   BarElement,
 )
 
+interface RadarDataItem {
+  description: string;
+  status: string;
+  value: number;
+}
+
 interface RadarData {
-  [key: string]: number;
+  [key: string]: RadarDataItem;
 }
 
 interface Participant {
@@ -42,11 +49,9 @@ interface Participant {
 
 interface AnalysisData {
   participants: Participant[];
-  finalScore: number;
-  finalScoreDescription: string;
-  categoryDescriptions: {
-    [key: string]: string;
-  };
+  // categoryDescriptions: {
+  //   [key: string]: string;
+  // };
   advice: string;
 }
 
@@ -64,24 +69,16 @@ export default function Results() {
   const analysisData: AnalysisData | null = useMemo(() => {
     if (!result) return null
     try {
-      // Detailed validation of the result structure
       if (!result.participants || !Array.isArray(result.participants) || result.participants.length === 0) {
         throw new Error('Invalid or empty participants data')
       }
-      if (typeof result.finalScore !== 'number') {
-        throw new Error('Invalid finalScore')
-      }
-      if (typeof result.finalScoreDescription !== 'string') {
-        throw new Error('Invalid finalScoreDescription')
-      }
-      if (typeof result.categoryDescriptions !== 'object' || result.categoryDescriptions === null) {
-        throw new Error('Invalid categoryDescriptions')
-      }
+      // if (typeof result.categoryDescriptions !== 'object' || result.categoryDescriptions === null) {
+      //   throw new Error('Invalid categoryDescriptions')
+      // }
       if (typeof result.advice !== 'string') {
         throw new Error('Invalid advice')
       }
 
-      // Validate each participant
       result.participants.forEach((participant: Participant, index: number) => {
         if (typeof participant.name !== 'string') {
           throw new Error(`Invalid name for participant at index ${index}`)
@@ -129,7 +126,7 @@ export default function Results() {
         const color = participantColors[participant.name] || 'rgb(0, 0, 0)';
         return {
           label: participant.name,
-          data: radarLabels.map(label => participant.radarData[label] || 0),
+          data: radarLabels.map(label => participant.radarData[label].value),
           backgroundColor: color,
           borderColor: color,
           borderWidth: 1,
@@ -211,13 +208,6 @@ export default function Results() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent>
-          <p className="text-xl font-bold mb-2">대화 유형: {analysisData.finalScore}</p>
-          <p>{analysisData.finalScoreDescription}</p>
-        </CardContent>
-      </Card>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card>
           <CardContent>
@@ -260,7 +250,9 @@ export default function Results() {
           <CardContent>
             {selectedCategory ? (
               <>
-                <p className="mb-4">{analysisData.categoryDescriptions[selectedCategory]}</p>
+                <p className="mb-4">
+                  {analysisData.participants[0].radarData[selectedCategory].description}
+                </p>
                 <Bar 
                   data={{
                     labels: chartData.datasets.map(dataset => dataset.label),
@@ -303,6 +295,13 @@ export default function Results() {
               <div key={index} className="border-b pb-4 last:border-b-0">
                 <h3 className="text-lg font-semibold mb-2">{participant.name}</h3>
                 <p>{participant.reasoning}</p>
+                <div className="mt-2">
+                  {Object.entries(participant.radarData).map(([category, data]) => (
+                    <div key={category} className="mb-1">
+                      <span className="font-medium">{category}:</span> {data.status} ({data.value})
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
